@@ -74,6 +74,7 @@ contract ThemisICO is Ownable, Pausable {
     function faucetCoin() public whenNotPaused {
         uint256 oneToken = 1000000000000000000;
         // a large amount of coints have to be previously approved to this contract's address
+        // TODO: add time limit
         _coin.transferFrom(_coin.owner(), msg.sender, oneToken);
     }
 }
