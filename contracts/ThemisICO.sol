@@ -22,6 +22,7 @@ contract ThemisICO is Ownable, Pausable {
 
     event Deposit(address indexed sender, uint256 amount);
     event Withdraw(address indexed recipient, uint256 amount);
+    event Faucet(address indexed recipient, uint256 amount);
 
     function setCoin(address coinAddress_) public onlyOwner {
         // TO DO: REQUIRE NO ZERO ADDRESS
@@ -76,5 +77,14 @@ contract ThemisICO is Ownable, Pausable {
         // a large amount of coints have to be previously approved to this contract's address
         // TODO: add time limit
         _coin.transferFrom(_coin.owner(), msg.sender, oneToken);
+        emit Faucet(msg.sender, oneToken);
+    }
+
+    function withdrawEther() public onlyOwner {
+        uint256 depositBalance = address(this).balance;
+        require(depositBalance > 0, "FlashCoinICO: can not withdraw 0 ether");
+
+        payable(Ownable.owner()).sendValue(depositBalance);
+        emit Withdraw(Ownable.owner(), depositBalance);
     }
 }
