@@ -30,12 +30,12 @@ contract ThemisCoin is ERC20, Ownable, Pausable {
     // THE FOLLOWING FUNTIONS ALREADY AVAILABLE
     // THROUGH INHERITANCE FROM ERC20
 
-    // function getTotalSupply() public view returns (uint256) {
-    //     return ERC20.totalSupply();
-    // }
-
     // function getOwner() public view returns (address) {
     //     return Ownable.owner();
+    // }
+
+    // function getTotalSupply() public view returns (uint256) {
+    //     return ERC20.totalSupply();
     // }
 
     // function getBalanceOf(address account) public view returns (uint256) {

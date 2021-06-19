@@ -13,37 +13,31 @@ contract ThemisICO is Ownable, Pausable {
     ThemisCoin private _coin;
     address private _ownerCoin;
     address private _coinAddress;
-    bool private _coinDefined;
 
-    modifier coinIsSet {
-        require(_coinDefined, "ThemixICO: You must first set an address of the deployed coin");
-        _;
+    constructor(address ownerICO_, address coinAddress_) {
+        Ownable.transferOwnership(ownerICO_);
+        _coinAddress = coinAddress_;
+        _coin = ThemisCoin(_coinAddress);
     }
 
     event Deposit(address indexed sender, uint256 amount);
     event Withdraw(address indexed recipient, uint256 amount);
 
-    constructor(address ownerICO) {
-        Ownable.transferOwnership(ownerICO);
-    }
-
     function setCoin(address coinAddress_) public onlyOwner {
         // TO DO: REQUIRE NO ZERO ADDRESS
         _coinAddress = coinAddress_;
-        _coin = ThemisCoin(_coinAddress);
-        _ownerCoin = _coin.owner();
-        _coinDefined = true;
+        _coin = ThemisCoin(coinAddress_);
     }
 
-    function getCoinOwner() public view coinIsSet returns (address) {
-        return _ownerCoin;
+    function getCoinOwner() public view returns (address) {
+        return _coin.owner();
     }
 
-    function getContractAllowance() public view coinIsSet returns (uint256) {
-        return _coin.allowance(_ownerCoin, address(this));
+    function getContractAllowance() public view returns (uint256) {
+        return _coin.allowance(_coin.owner(), address(this));
     }
 
-    function getCoinAddress() public view coinIsSet returns (address) {
+    function getCoinAddress() public view returns (address) {
         return _coinAddress;
     }
 
@@ -59,7 +53,7 @@ contract ThemisICO is Ownable, Pausable {
         _buyTokens(msg.sender, msg.value);
     }
 
-    function _buyTokens(address sender, uint256 amount) private coinIsSet whenNotPaused {
+    function _buyTokens(address sender, uint256 amount) private whenNotPaused {
         require(
             amount % 10**9 == 0,
             "THEMIS ICO: Contract doesn't give back change. The received amount must be divisible by price."
@@ -77,9 +71,9 @@ contract ThemisICO is Ownable, Pausable {
         Pausable._unpause();
     }
 
-    function faucetCoin() public coinIsSet whenNotPaused {
+    function faucetCoin() public whenNotPaused {
         uint256 oneToken = 1000000000000000000;
         // a large amount of coints have to be previously approved to this contract's address
-        _coin.transferFrom(_ownerCoin, msg.sender, oneToken);
+        _coin.transferFrom(_coin.owner(), msg.sender, oneToken);
     }
 }

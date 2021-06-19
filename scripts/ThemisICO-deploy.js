@@ -9,16 +9,21 @@ RUN LIKE THIS:
 */
 const hre = require('hardhat');
 const { deployed } = require('./deployed');
+const { getDeployedAddress } = require('./deployed-get-address');
 
 async function main() {
   const currentContract = 'ThemisICO';
+  const coinName = 'ThemisCoin';
+
   const [deployer] = await ethers.getSigners();
   console.log('Deploying contracts with the account:', deployer.address);
 
   // We get the contract to deploy
   const MyContract = await hre.ethers.getContractFactory(currentContract);
 
-  const mycontract = await MyContract.deploy(deployer.address);
+  const coinAddress = await getDeployedAddress(coinName, hre.network.name);
+  console.log('Use the coin is deployed in address:', coinAddress.address);
+  const mycontract = await MyContract.deploy(deployer.address, coinAddress.address);
 
   await mycontract.deployed();
 
